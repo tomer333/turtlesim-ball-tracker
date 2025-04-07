@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+  # this is a service which works on a bridged dev network, without spamming your host connected network.
+  # meant to test your code and running the eagle nodes locally.`
+  turtle_ball_tracking_development_environment:
+    # Define the name of the docker image
+    image: "turtle_ball_tracking/development_environment:latest"
+    # Define the name of the container
+    container_name: "turtle_ball_tracking_development_container"
+    user: user
+    build:
+      context: ..
+      dockerfile: environment.Dockerfile
+    privileged: true
+    network_mode: "host"
+    command: sleep infinity
+    volumes:
+      - ../..:/app
+      - ../cyclonedds.xml:/config/dds/cyclonedds.xml
+      - ../ros_exports.sh:/ros_exports.sh
+    environment:
+      -  DISPLAY

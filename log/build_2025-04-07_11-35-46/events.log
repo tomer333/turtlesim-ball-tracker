@@ -1,0 +1,37 @@
+[0.000000] (-) TimerEvent: {}
+[0.000516] (turtle_ball_tracking) JobQueued: {'identifier': 'turtle_ball_tracking', 'dependencies': OrderedDict()}
+[0.000550] (turtle_ball_tracking) JobStarted: {'identifier': 'turtle_ball_tracking'}
+[0.099931] (-) TimerEvent: {}
+[0.200155] (-) TimerEvent: {}
+[0.300466] (-) TimerEvent: {}
+[0.322541] (turtle_ball_tracking) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/app/build/turtle_ball_tracking/build', '--no-deps', 'symlink_data'], 'cwd': '/app/build/turtle_ball_tracking', 'env': {'HOSTNAME': 'elbit18-ROG-Strix-G533ZS-G533ZS', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib', 'HOME': '/home/user', 'ROS_PYTHON_VERSION': '3', 'REMOTE_CONTAINERS': 'true', 'ROS_DISTRO': 'humble', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-c748605e-9e64-4bd2-90ab-7aab2f7622c7.sock', '_': '/usr/bin/cat', 'ROS_VERSION': '2', 'TERM': 'xterm', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'DISPLAY': ':0', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-c748605e-9e64-4bd2-90ab-7aab2f7622c7.sock","/home/user/.gnupg/S.gpg-agent"]', 'LANG': 'C.UTF-8', 'LS_COLORS': '', 'AMENT_PREFIX_PATH': '/opt/ros/humble', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-c748605e-9e64-4bd2-90ab-7aab2f7622c7.sock', 'LC_ALL': 'C.UTF-8', 'PWD': '/app/build/turtle_ball_tracking', 'PYTHONPATH': '/app/build/turtle_ball_tracking/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/app/install/turtle_ball_tracking/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1'}, 'shell': False}
+[0.400552] (-) TimerEvent: {}
+[0.461119] (turtle_ball_tracking) StdoutLine: {'line': b'running develop\n'}
+[0.500642] (-) TimerEvent: {}
+[0.535040] (turtle_ball_tracking) StdoutLine: {'line': b'running egg_info\n'}
+[0.535260] (turtle_ball_tracking) StdoutLine: {'line': b'creating turtle_ball_tracking.egg-info\n'}
+[0.535373] (turtle_ball_tracking) StdoutLine: {'line': b'writing turtle_ball_tracking.egg-info/PKG-INFO\n'}
+[0.535490] (turtle_ball_tracking) StdoutLine: {'line': b'writing dependency_links to turtle_ball_tracking.egg-info/dependency_links.txt\n'}
+[0.535565] (turtle_ball_tracking) StdoutLine: {'line': b'writing entry points to turtle_ball_tracking.egg-info/entry_points.txt\n'}
+[0.535679] (turtle_ball_tracking) StdoutLine: {'line': b'writing requirements to turtle_ball_tracking.egg-info/requires.txt\n'}
+[0.535749] (turtle_ball_tracking) StdoutLine: {'line': b'writing top-level names to turtle_ball_tracking.egg-info/top_level.txt\n'}
+[0.535816] (turtle_ball_tracking) StdoutLine: {'line': b"writing manifest file 'turtle_ball_tracking.egg-info/SOURCES.txt'\n"}
+[0.536608] (turtle_ball_tracking) StdoutLine: {'line': b"reading manifest file 'turtle_ball_tracking.egg-info/SOURCES.txt'\n"}
+[0.536978] (turtle_ball_tracking) StdoutLine: {'line': b"writing manifest file 'turtle_ball_tracking.egg-info/SOURCES.txt'\n"}
+[0.537840] (turtle_ball_tracking) StdoutLine: {'line': b'running build_ext\n'}
+[0.537934] (turtle_ball_tracking) StdoutLine: {'line': b'Creating /app/install/turtle_ball_tracking/lib/python3.10/site-packages/turtle-ball-tracking.egg-link (link to .)\n'}
+[0.538417] (turtle_ball_tracking) StdoutLine: {'line': b'Installing ball_image_publisher script to /app/install/turtle_ball_tracking/lib/turtle_ball_tracking\n'}
+[0.538508] (turtle_ball_tracking) StdoutLine: {'line': b'Installing ball_tracker script to /app/install/turtle_ball_tracking/lib/turtle_ball_tracking\n'}
+[0.538596] (turtle_ball_tracking) StdoutLine: {'line': b'\n'}
+[0.538677] (turtle_ball_tracking) StdoutLine: {'line': b'Installed /app/build/turtle_ball_tracking\n'}
+[0.538746] (turtle_ball_tracking) StdoutLine: {'line': b'running symlink_data\n'}
+[0.538833] (turtle_ball_tracking) StdoutLine: {'line': b'creating /app/install/turtle_ball_tracking/share/ament_index\n'}
+[0.538938] (turtle_ball_tracking) StdoutLine: {'line': b'creating /app/install/turtle_ball_tracking/share/ament_index/resource_index\n'}
+[0.539003] (turtle_ball_tracking) StdoutLine: {'line': b'creating /app/install/turtle_ball_tracking/share/ament_index/resource_index/packages\n'}
+[0.539066] (turtle_ball_tracking) StdoutLine: {'line': b'symbolically linking /app/build/turtle_ball_tracking/resource/turtle_ball_tracking -> /app/install/turtle_ball_tracking/share/ament_index/resource_index/packages\n'}
+[0.539131] (turtle_ball_tracking) StdoutLine: {'line': b'symbolically linking /app/build/turtle_ball_tracking/package.xml -> /app/install/turtle_ball_tracking/share/turtle_ball_tracking\n'}
+[0.539195] (turtle_ball_tracking) StdoutLine: {'line': b'creating /app/install/turtle_ball_tracking/share/turtle_ball_tracking/launch\n'}
+[0.539258] (turtle_ball_tracking) StdoutLine: {'line': b'symbolically linking /app/build/turtle_ball_tracking/launch/ball_tracker.launch.py -> /app/install/turtle_ball_tracking/share/turtle_ball_tracking/launch\n'}
+[0.555625] (turtle_ball_tracking) CommandEnded: {'returncode': 0}
+[0.564864] (turtle_ball_tracking) JobEnded: {'identifier': 'turtle_ball_tracking', 'rc': 0}
+[0.565388] (-) EventReactorShutdown: {}

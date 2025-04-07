@@ -1,0 +1,6 @@
+numpy
+opencv-python
+pre-commit
+pydantic
+pylint
+pytest==8.0.0

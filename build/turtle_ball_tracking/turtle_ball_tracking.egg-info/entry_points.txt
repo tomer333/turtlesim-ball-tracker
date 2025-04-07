@@ -1,0 +1,4 @@
+[console_scripts]
+ball_image_publisher = turtle_ball_tracking.ball_image_publisher:main
+ball_tracker = turtle_ball_tracking.ball_tracker:main
+

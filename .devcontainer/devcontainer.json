@@ -1,0 +1,20 @@
+{
+  "name": "Turtle ball tracking Container",
+  "dockerComposeFile": ["../docker/compose/docker-compose.dev-container.yml"],
+  "service": "turtle_ball_tracking_development_environment",
+  "containerUser": "user",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.vscode-pylance",
+        "ms-python.autopep8",
+        "ms-python.python",
+        "esbenp.prettier-vscode",
+        "ms-python.debugpy"
+      ]
+    }
+  },
+  "workspaceFolder": "/app",
+  "runArgs": ["--net=host"],
+  "postStartCommand": "rm -rf ./install ./build ./log; colcon build --symlink; pre-commit install"
+}
