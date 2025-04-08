@@ -7,126 +7,80 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from turtlesim.msg import Pose
 import math
+from turtle_ball_tracking.ball_detector import BallDetector
+from turtle_ball_tracking.pid_controller import PIDController
 
 
 class BallTracker(Node):
     def __init__(self):
         super().__init__('ball_tracker')
 
-        self.subscription = self.create_subscription(
-            Image, '/camera/image_raw', self.image_callback, 10)
+        self._ball_image_subscriber = self.create_subscription(
+            Image, '/camera/image_raw', self._image_callback, 10)
 
-        self.pose_subscription = self.create_subscription(
-            Pose, '/turtle1/pose', self.pose_callback, 10)
+        self._turtle_pose_subscriber = self.create_subscription(
+            Pose, '/turtle1/pose', self._pose_callback, 10)
 
-        self.publisher_ = self.create_publisher(Twist, '/turtle1/cmd_vel', 10)
+        self._turtle_pos_publisher = self.create_publisher(
+            Twist, '/turtle1/cmd_vel', 10)
 
-        self.bridge = CvBridge()
-        self.img_width = 500
-        self.img_height = 500
-        self.turtle_world_size = 11
-        self.turtle_world_lower_limit = 0.5
-        self.turtle_world_upper_limit = 10.5
+        self._bridge = CvBridge()
+        self._ball_detector = BallDetector(500, 500)
+        self._pid_controller_angle = PIDController(3.0, 0.0, 0.5)
+        self._pid_controller_distance = PIDController(2.0, 0.0, 0.5)
 
-        self.current_x = 5.5
-        self.current_y = 5.5
-        self.current_theta = 0.0
+        self._turtle_world_lower_limit = 0.5
+        self._turtle_world_upper_limit = 10.5
 
-        self.turtle_linear_speed = 3.5
-        self.turtle_angular_speed = 4.0
+        self._current_x = 5.5
+        self._current_y = 5.5
+        self._current_theta = 0.0
 
-        self.kp_angle = 3.0
-        self.ki_angle = 0.0
-        self.kd_angle = 0.5
-        self.kp_distance = 2.0
-        self.ki_distance = 0.0
-        self.kd_distance = 0.5
+    def _pose_callback(self, msg):
+        self._current_x = msg.x
+        self._current_y = msg.y
+        self._current_theta = msg.theta
 
-        self.prev_angle_error = 0.0
-        self.integral_angle = 0.0
-        self.prev_distance_error = 0.0
-        self.integral_distance = 0.0
-
-    def pose_callback(self, msg):
-        self.current_x = msg.x
-        self.current_y = msg.y
-        self.current_theta = msg.theta
-
-    def image_callback(self, msg):
+    def _image_callback(self, msg):
         try:
-            frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+            frame = self._bridge.imgmsg_to_cv2(msg, "bgr8")
         except Exception as e:
             self.get_logger().error(f"Failed to convert image: {e}")
             return
 
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        ball_x, ball_y = self._ball_detector.detect_ball(frame)
+        if ball_x is not None and ball_y is not None:
+            self._track_and_move_turtle(ball_x, ball_y)
 
-        lower_red = np.array([0, 120, 70])
-        upper_red = np.array([10, 255, 255])
-
-        mask = cv2.inRange(hsv, lower_red, upper_red)
-        contours, _ = cv2.findContours(
-            mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-        if contours:
-            ball_contour = max(contours, key=cv2.contourArea)
-            (ball_x, ball_y), radius = cv2.minEnclosingCircle(ball_contour)
-
-            ball_x_mapped = (ball_x / self.img_width) * self.turtle_world_size
-            ball_y_mapped = (1 - (ball_y / self.img_height)) * \
-                self.turtle_world_size
-
-            self.track_and_move_turtle(ball_x_mapped, ball_y_mapped)
-
-    def track_and_move_turtle(self, ball_x, ball_y):
+    def _track_and_move_turtle(self, ball_x, ball_y):
         target_angle = math.atan2(
-            ball_y - self.current_y, ball_x - self.current_x)
+            ball_y - self._current_y, ball_x - self._current_x)
 
-        angle_error = target_angle - self.current_theta
+        angle_error = target_angle - self._current_theta
 
         angle_error = (angle_error + math.pi) % (2 * math.pi) - math.pi
 
         vel_msg = Twist()
 
-        angular_velocity = self.pid_angle(angle_error)
+        angular_velocity = self._pid_controller_angle.compute(angle_error)
         distance_error = math.sqrt(
-            (ball_x - self.current_x) ** 2 + (ball_y - self.current_y) ** 2)
-        linear_velocity = self.pid_distance(distance_error)
+            (ball_x - self._current_x) ** 2 + (ball_y - self._current_y) ** 2)
+        linear_velocity = self._pid_controller_distance.compute(distance_error)
 
         vel_msg.angular.z = angular_velocity
 
-        next_x = self.current_x + \
-            self.turtle_world_lower_limit * math.cos(target_angle)
-        next_y = self.current_y + \
-            self.turtle_world_lower_limit * math.sin(target_angle)
+        next_x = self._current_x + \
+            self._turtle_world_lower_limit * math.cos(target_angle)
+        next_y = self._current_y + \
+            self._turtle_world_lower_limit * math.sin(target_angle)
 
-        if self.turtle_world_lower_limit <= next_x <= self.turtle_world_upper_limit and \
-                self.turtle_world_lower_limit <= next_y <= self.turtle_world_upper_limit:
+        if self._turtle_world_lower_limit <= next_x <= self._turtle_world_upper_limit and \
+                self._turtle_world_lower_limit <= next_y <= self._turtle_world_upper_limit:
             vel_msg.linear.x = linear_velocity
         else:
             vel_msg.linear.x = 0.0
 
-        self.publisher_.publish(vel_msg)
-
-    def pid_angle(self, angle_error):
-
-        p = self.kp_angle * angle_error
-        self.integral_angle += angle_error
-        i = self.ki_angle * self.integral_angle
-        d = self.kd_angle * (angle_error - self.prev_angle_error)
-        self.prev_angle_error = angle_error
-
-        return p + i + d
-
-    def pid_distance(self, distance_error):
-
-        p = self.kp_distance * distance_error
-        self.integral_distance += distance_error
-        i = self.ki_distance * self.integral_distance
-        d = self.kd_distance * (distance_error - self.prev_distance_error)
-        self.prev_distance_error = distance_error
-
-        return p + i + d
+        self._turtle_pos_publisher.publish(vel_msg)
 
 
 def main(args=None):
