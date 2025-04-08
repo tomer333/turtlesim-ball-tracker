@@ -35,6 +35,18 @@ class BallTracker(Node):
         self.turtle_linear_speed = 3.5
         self.turtle_angular_speed = 4.0
 
+        self.kp_angle = 3.0
+        self.ki_angle = 0.0
+        self.kd_angle = 0.5
+        self.kp_distance = 2.0
+        self.ki_distance = 0.0
+        self.kd_distance = 0.5
+
+        self.prev_angle_error = 0.0
+        self.integral_angle = 0.0
+        self.prev_distance_error = 0.0
+        self.integral_distance = 0.0
+
     def pose_callback(self, msg):
         self.current_x = msg.x
         self.current_y = msg.y
@@ -76,7 +88,12 @@ class BallTracker(Node):
 
         vel_msg = Twist()
 
-        vel_msg.angular.z = self.turtle_angular_speed * angle_error
+        angular_velocity = self.pid_angle(angle_error)
+        distance_error = math.sqrt(
+            (ball_x - self.current_x) ** 2 + (ball_y - self.current_y) ** 2)
+        linear_velocity = self.pid_distance(distance_error)
+
+        vel_msg.angular.z = angular_velocity
 
         next_x = self.current_x + \
             self.turtle_world_lower_limit * math.cos(target_angle)
@@ -85,11 +102,31 @@ class BallTracker(Node):
 
         if self.turtle_world_lower_limit <= next_x <= self.turtle_world_upper_limit and \
                 self.turtle_world_lower_limit <= next_y <= self.turtle_world_upper_limit:
-            vel_msg.linear.x = self.turtle_linear_speed
+            vel_msg.linear.x = linear_velocity
         else:
             vel_msg.linear.x = 0.0
 
         self.publisher_.publish(vel_msg)
+
+    def pid_angle(self, angle_error):
+
+        p = self.kp_angle * angle_error
+        self.integral_angle += angle_error
+        i = self.ki_angle * self.integral_angle
+        d = self.kd_angle * (angle_error - self.prev_angle_error)
+        self.prev_angle_error = angle_error
+
+        return p + i + d
+
+    def pid_distance(self, distance_error):
+
+        p = self.kp_distance * distance_error
+        self.integral_distance += distance_error
+        i = self.ki_distance * self.integral_distance
+        d = self.kd_distance * (distance_error - self.prev_distance_error)
+        self.prev_distance_error = distance_error
+
+        return p + i + d
 
 
 def main(args=None):
